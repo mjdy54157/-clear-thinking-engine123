@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>بوصلة التفكير الواضح</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Markazi+Text:wght@500;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #EEF1EF; --paper-card: #FFFFFF; --ink: #1F2A24; --ink-soft: #4B5A52;
+    --line: #D6DED9; --accent: #2F6F62; --accent-soft: #E4EEEB;
+    --amber: #B9793B; --amber-soft: #F5E9DC; --brick: #A8452F; --brick-soft: #F5E1DB;
+    box-sizing: border-box; padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper: #14181A; --paper-card: #1B2124; --ink: #E7ECE9; --ink-soft: #A9B6AF;
+      --line: #2C3538; --accent: #5FAE9C; --accent-soft: #1E2E2A;
+      --amber: #D89A5C; --amber-soft: #302517; --brick: #D3705A; --brick-soft: #301D18;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #14181A; --paper-card: #1B2124; --ink: #E7ECE9; --ink-soft: #A9B6AF;
+    --line: #2C3538; --accent: #5FAE9C; --accent-soft: #1E2E2A;
+    --amber: #D89A5C; --amber-soft: #302517; --brick: #D3705A; --brick-soft: #301D18;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: var(--paper); }
+  body { font-family: 'IBM Plex Sans Arabic', sans-serif; color: var(--ink); padding: 48px 20px 80px; display: flex; justify-content: center; }
+  .page { width: 100%; max-width: 640px; }
+  header { margin-bottom: 36px; }
+  h1 { font-family: 'Markazi Text', serif; font-weight: 700; font-size: clamp(30px, 6vw, 42px); line-height: 1.15; margin: 0 0 10px; }
+  header p { color: var(--ink-soft); font-size: 15px; line-height: 1.75; max-width: 48ch; margin: 0; }
+  .disclaimer { background: var(--paper-card); border: 1px solid var(--line); border-radius: 8px; padding: 12px 16px; font-size: 13.5px; color: var(--ink-soft); margin-top: 18px; }
+  .step { border-top: 1px solid var(--line); padding: 28px 0; }
+  .step:last-of-type { border-bottom: 1px solid var(--line); }
+  .step-head { display: flex; align-items: baseline; gap: 10px; margin-bottom: 16px; }
+  .step-num { font-family: 'Markazi Text', serif; font-size: 17px; color: var(--accent); }
+  .step-title { font-size: 16px; font-weight: 600; }
+  textarea { width: 100%; font-family: inherit; font-size: 15px; padding: 12px 14px; border: 1px solid var(--line); border-radius: 6px; background: var(--paper-card); color: var(--ink); resize: vertical; min-height: 70px; }
+  textarea:focus, input:focus, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+  .sliders { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  @media (max-width: 480px) { .sliders { grid-template-columns: 1fr; } }
+  .slider-block label { display: block; font-size: 13.5px; color: var(--ink-soft); margin-bottom: 10px; }
+  .slider-row { display: flex; align-items: center; gap: 12px; }
+  input[type="range"] { flex: 1; accent-color: var(--accent); }
+  .slider-val { font-family: 'Markazi Text', serif; font-size: 19px; min-width: 22px; text-align: center; }
+  .signal-hint { color: var(--ink-soft); font-size: 13.5px; margin: -6px 0 14px; }
+  .signal { display: flex; align-items: flex-start; gap: 10px; padding: 9px 0; cursor: pointer; font-size: 14.5px; line-height: 1.6; }
+  .signal input { margin-top: 3px; accent-color: var(--accent); }
+  button.run { width: 100%; margin-top: 32px; padding: 14px 18px; font-family: inherit; font-size: 15px; font-weight: 600; color: var(--paper-card); background: var(--accent); border: none; border-radius: 6px; cursor: pointer; transition: opacity 0.15s ease; }
+  button.run:hover { opacity: 0.9; }
+  .warn-inline { color: var(--brick); font-size: 13.5px; margin-top: 10px; display: none; }
+  #results { margin-top: 40px; display: none; }
+  .metrics-row { display: flex; gap: 10px; margin-bottom: 18px; flex-wrap: wrap; }
+  .metric { flex: 1; min-width: 140px; background: var(--paper-card); border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; }
+  .metric .m-label { font-size: 12.5px; color: var(--ink-soft); margin-bottom: 4px; }
+  .metric .m-value { font-family: 'Markazi Text', serif; font-size: 21px; }
+  .status-card { border-radius: 8px; padding: 20px 22px; margin-bottom: 22px; }
+  .status-card.green { background: var(--accent-soft); border: 1px solid var(--accent); }
+  .status-card.yellow { background: var(--amber-soft); border: 1px solid var(--amber); }
+  .status-card.red { background: var(--brick-soft); border: 1px solid var(--brick); }
+  .status-card p { margin: 6px 0; font-size: 14.5px; line-height: 1.7; }
+  h3.section-h { font-size: 14px; color: var(--ink-soft); margin: 0 0 10px; font-weight: 600; }
+  ul.actions { margin: 0 0 20px; padding-inline-start: 20px; }
+  ul.actions li { margin-bottom: 8px; font-size: 14.5px; line-height: 1.65; }
+  .note { display: flex; gap: 8px; background: var(--paper-card); border: 1px solid var(--line); border-radius: 8px; padding: 12px 16px; font-size: 13.5px; color: var(--ink-soft); line-height: 1.65; margin-bottom: 26px; }
+  .experiment { border: 1px solid var(--line); border-radius: 8px; padding: 20px 22px; }
+  .experiment h4 { font-family: 'Markazi Text', serif; font-size: 20px; margin: 0 0 6px; }
+  .experiment .desc { color: var(--ink-soft); font-size: 14px; margin-bottom: 16px; line-height: 1.65; }
+  .phase { border-top: 1px solid var(--line); padding: 14px 0; }
+  .phase:first-of-type { border-top: none; }
+  .phase-head { display: flex; justify-content: space-between; align-items: baseline; font-weight: 600; font-size: 14.5px; margin-bottom: 4px; }
+  .phase-dur { color: var(--accent); font-weight: 500; font-size: 13px; }
+  .phase p { margin: 0; font-size: 14px; color: var(--ink-soft); line-height: 1.6; }
+  footer { margin-top: 48px; font-size: 12.5px; color: var(--ink-soft); text-align: center; }
+</style>
+</head>
+<body>
+<div class="page">
+  <header>
+    <h1>🧠 بوصلة التفكير الواضح</h1>
+    <p>حوّل التردد أو التسويف إلى خطوة تالية صغيرة قابلة للتنفيذ، بناءً على مستوى طاقتك وسبب التردد الفعلي.</p>
+    <div class="disclaimer">هذه أداة تفكير وإنتاجية وليست تشخيصًا طبيًا أو نفسيًا. النتيجة اقتراح أولي قابل للمراجعة.</div>
+  </header>
+
+  <div class="step">
+    <div class="step-head"><span class="step-num">١</span><span class="step-title">ما المهمة أو القرار الذي يواجهك؟</span></div>
+    <textarea id="task" placeholder="مثلًا: هل أبدأ بتعلم الذكاء الاصطناعي أم الأمن السيبراني؟"></textarea>
+  </div>
+
+  <div class="step">
+    <div class="step-head"><span class="step-num">٢</span><span class="step-title">قيّم مستوى الإرهاق الحالي</span></div>
+    <div class="sliders">
+      <div class="slider-block">
+        <label for="physical">الإرهاق الجسدي (١ = مرتاح، ١٠ = منهك)</label>
+        <div class="slider-row"><input type="range" id="physical" min="1" max="10" value="3"><span class="slider-val" id="physicalVal">3</span></div>
+      </div>
+      <div class="slider-block">
+        <label for="mental">الإرهاق الذهني (١ = صافٍ، ١٠ = محترق ذهنيًا)</label>
+        <div class="slider-row"><input type="range" id="mental" min="1" max="10" value="4"><span class="slider-val" id="mentalVal">4</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-head"><span class="step-num">٣</span><span class="step-title">ما الذي يسبب التردد؟</span></div>
+    <p class="signal-hint">اختر كل ما ينطبق. إذا لم تكن متأكدًا، اتركها فارغة.</p>
+    <div id="signals"></div>
+  </div>
+
+  <button class="run" id="runBtn">🚀 احصل على الخطوة التالية</button>
+  <p class="warn-inline" id="warnInline">اكتب المهمة أو القرار أولًا؛ لا يمكن تحليل فراغ.</p>
+
+  <div id="results"></div>
+  <div id="feedback"></div>
+
+  <footer>يعمل بالكامل داخل هذه الصفحة — لا يُرسل أي شيء تكتبه لأي مكان إلا عند الضغط على "إرسال الرأي".</footer>
+</div>
+
+<style>
+  .fb-card { border-top: 1px solid var(--line); padding-top: 28px; margin-top: 8px; }
+  .fb-q { margin-bottom: 18px; }
+  .fb-q p { font-size: 14.5px; font-weight: 600; margin: 0 0 8px; }
+  .fb-opts { display: flex; gap: 8px; flex-wrap: wrap; }
+  .fb-opt { padding: 8px 14px; border: 1px solid var(--line); border-radius: 20px; font-size: 13.5px; cursor: pointer; background: var(--paper-card); color: var(--ink); }
+  .fb-opt.selected { background: var(--accent); color: var(--paper-card); border-color: var(--accent); }
+  .fb-note { width: 100%; font-family: inherit; font-size: 14px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 6px; background: var(--paper-card); color: var(--ink); min-height: 60px; resize: vertical; }
+  .fb-submit { margin-top: 6px; padding: 11px 16px; font-family: inherit; font-size: 14px; font-weight: 600; color: var(--paper-card); background: var(--accent); border: none; border-radius: 6px; cursor: pointer; }
+  .fb-fallback { background: var(--paper-card); border: 1px solid var(--line); border-radius: 8px; padding: 14px 16px; font-size: 13px; white-space: pre-wrap; line-height: 1.7; margin-top: 12px; }
+  .fb-copy { margin-top: 8px; padding: 8px 14px; font-size: 13px; border: 1px solid var(--line); border-radius: 6px; background: var(--paper-card); cursor: pointer; }
+  .fb-done { color: var(--accent); font-size: 14px; font-weight: 600; }
+</style>
+
+<script>
+// إيميل مجدي — هنا بيوصله رأي كل مُختبِر
+const FEEDBACK_EMAIL = "magdi.bakhet1502@gmail.com";
+
+const SIGNAL_DEFINITIONS = {
+  "1": { label: "إرهاق جسدي أو طاقة منخفضة", kind: "energy" },
+  "2": { label: "إجهاد ذهني أو حمل معرفي زائد", kind: "energy" },
+  "3": { label: "المهمة معقدة أو يصعب تقسيمها", kind: "execution" },
+  "4": { label: "لا أعرف من أين أبدأ", kind: "execution" },
+  "5": { label: "ملل أو ضعف الدافع الداخلي", kind: "motivation" },
+  "6": { label: "كمالية أو ضغط المعايير العالية", kind: "motivation" },
+  "7": { label: "مشتتات في البيئة أو مساحة العمل", kind: "environment" },
+  "8": { label: "غموض بشأن النتيجة المستقبلية", kind: "uncertainty" },
+  "9": { label: "خوف من اتخاذ القرار الخطأ", kind: "uncertainty" },
+};
+const KIND_LABELS = {
+  energy: "الطاقة", environment: "البيئة", uncertainty: "الغموض والخوف من القرار",
+  execution: "غياب الخطوة الأولى", motivation: "الاحتكاك التحفيزي",
+};
+
+const signalsEl = document.getElementById('signals');
+Object.entries(SIGNAL_DEFINITIONS).forEach(([key, def]) => {
+  const row = document.createElement('label');
+  row.className = 'signal';
+  row.innerHTML = `<input type="checkbox" data-key="${key}"><span>${def.label}</span>`;
+  signalsEl.appendChild(row);
+});
+
+const physical = document.getElementById('physical');
+const mental = document.getElementById('mental');
+document.getElementById('physicalVal').textContent = physical.value;
+document.getElementById('mentalVal').textContent = mental.value;
+physical.addEventListener('input', () => document.getElementById('physicalVal').textContent = physical.value);
+mental.addEventListener('input', () => document.getElementById('mentalVal').textContent = mental.value);
+
+function fatigueStatus(total) {
+  if (total >= 15) return ["طاقة منخفضة جدًا", "red", "لا تتخذ قرارًا كبيرًا الآن؛ خفّض المطلوب إلى خطوة مدتها خمس دقائق أو استرح أولًا."];
+  if (total >= 10) return ["طاقة متوسطة", "yellow", "استخدم جلسة قصيرة ومهمة محددة جدًا، ولا تحاول حل المشكلة كاملة في جلسة واحدة."];
+  return ["طاقة جيدة", "green", "لديك طاقة كافية لجلسة تركيز قصيرة على أعلى خطوة قيمة تالية."];
+}
+
+function makeMicroExperiment(task, hasComplexity) {
+  let focusB = "نفّذ تجربة صغيرة مرتبطة بالمهمة لمدة 30 دقيقة، ثم سجّل: مستوى الفضول، الطاقة بعد التجربة، والرغبة في تكرارها من 1 إلى 10.";
+  if (hasComplexity) {
+    focusB = "حوّل المهمة إلى نسخة صغيرة قابلة للعرض أو التنفيذ خلال 30 دقيقة. الهدف ليس الجودة النهائية، بل اكتشاف الجزء الذي يستحق المتابعة.";
+  }
+  return {
+    title: "🧪 تجربة صغيرة بدل قرار نهائي",
+    description: `لا تحاول حسم «${task.slice(0, 100)}» ذهنيًا. اجمع دليلًا صغيرًا من الواقع قبل الالتزام.`,
+    timeline: [
+      { phase: "١. تحديد السؤال", duration: "5 دقائق", focus: "اكتب ما تريد معرفته تحديدًا عن هذه المهمة، ثم اختر مصدرًا أو نشاطًا واحدًا يجيب عن هذا السؤال. لا تجمع معلومات بلا معيار." },
+      { phase: "٢. التنفيذ", duration: "30 دقيقة", focus: focusB },
+      { phase: "٣. المراجعة", duration: "5 دقائق", focus: "اكتب ما تعلمته وما الخطوة التالية، أو قرر بوضوح أن التجربة لا تستحق التكرار." },
+    ],
+  };
+}
+
+function analyzeClearThinking(task, physicalFatigue, mentalFatigue, selectedKeys) {
+  const totalFatigue = physicalFatigue + mentalFatigue;
+  const [fatigueLabel, color, energyRecommendation] = fatigueStatus(totalFatigue);
+  const kinds = new Set(selectedKeys.map(k => SIGNAL_DEFINITIONS[k].kind));
+
+  let primaryBarrier, primaryKind, summary, actionSteps;
+  if (totalFatigue >= 15) {
+    primaryBarrier = "الطاقة قبل الإنتاجية"; primaryKind = "energy";
+    summary = "مؤشر الإرهاق مرتفع؛ المشكلة قد لا تكون نقص انضباط، بل محاولة تنفيذ مهمة كبيرة بطاقة غير كافية.";
+    actionSteps = ["اختر أصغر نسخة من المهمة يمكن إنجازها خلال خمس دقائق.", "أزل خطوة واحدة غير ضرورية، ثم قرر هل تحتاج إلى الراحة أو الاستمرار.", "لا تستخدم نتيجة هذه الجلسة للحكم على قدرتك أو على قيمة الفكرة."];
+  } else if (kinds.has("energy")) {
+    primaryBarrier = "الطاقة"; primaryKind = "energy";
+    summary = "أنت تلاحظ إرهاقًا واضحًا حتى لو لم يظهر ذلك بالكامل في مجموع الإرهاق الرقمي؛ خذ هذا الإحساس على محمل الجد.";
+    actionSteps = ["قلّص حجم الجلسة إلى نصف ما كنت تخطط له.", "خذ استراحة قصيرة (5–10 دقائق) قبل البدء، حتى لو شعرت أنك قادر على الاستمرار.", "أعد تقييم مستوى طاقتك بعد الاستراحة قبل الالتزام بمهمة طويلة."];
+  } else if (kinds.has("environment")) {
+    primaryBarrier = "البيئة"; primaryKind = "environment";
+    summary = "هناك احتكاك بيئي واضح؛ تحسين المكان قد يكون أكثر فاعلية من محاولة زيادة الإرادة.";
+    actionSteps = ["أغلق إشعارًا أو مصدر تشتيت واحدًا فقط الآن.", "افتح الأدوات المطلوبة للمهمة وأبعد كل ما لا تحتاجه.", "ابدأ بمؤقت تركيز مدته 15 دقيقة، ثم أعد التقييم."];
+  } else if (kinds.has("uncertainty")) {
+    primaryBarrier = "الغموض والخوف من الالتزام"; primaryKind = "uncertainty";
+    summary = "أنت تتعامل مع قرار غير محسوم كما لو أنه يحتاج يقينًا كاملًا؛ هذا يضخم تكلفة البداية.";
+    actionSteps = ["استبدل سؤال «ما القرار الصحيح نهائيًا؟» بسؤال «ما الدليل الصغير الذي أحتاجه بعد ذلك؟».", "حدد معيارًا واحدًا لتقييم التجربة قبل تنفيذها.", "ضع موعدًا قصيرًا للمراجعة بدل إبقاء القرار مفتوحًا بلا نهاية."];
+  } else if (kinds.has("execution")) {
+    primaryBarrier = "غياب الخطوة الأولى"; primaryKind = "execution";
+    summary = "العائق يبدو تنفيذيًا: المهمة تحتاج تعريفًا أصغر، لا مزيدًا من التفكير العام.";
+    actionSteps = ["اكتب الناتج المرئي الذي يجب أن يوجد بعد 20 دقيقة.", "قسّم المهمة إلى فعل يبدأ بفعل واضح: اكتب، اتصل، افتح، قارن، أو جرّب.", "نفّذ الخطوة الأولى فقط قبل إعادة التخطيط."];
+  } else if (kinds.has("motivation")) {
+    primaryBarrier = "الاحتكاك التحفيزي"; primaryKind = "motivation";
+    summary = "الدافع منخفض أو المعايير عالية؛ جعل البداية أسهل وأقل مثالية أفضل من انتظار الحماس.";
+    actionSteps = ["أنشئ نسخة سيئة عمدًا أو مسودة أولى بلا التزام بالجودة.", "اربط المهمة بمكافأة أو موعد واضح وقصير.", "قيّم التقدم بعد 15 دقيقة، لا شعورك قبل البدء."];
+  } else {
+    primaryBarrier = "غير محدد بعد"; primaryKind = null;
+    summary = "لا توجد إشارة كافية لتحديد العائق؛ ابدأ بتعريف المهمة إلى ناتج صغير يمكن رؤيته.";
+    actionSteps = ["اكتب ما الذي يجب أن يكون مختلفًا بعد 20 دقيقة.", "اختر أول فعل ملموس، وليس خطة عامة.", "أعد التحليل بعد تجربة قصيرة بدل التفكير في كل الاحتمالات."];
+  }
+
+  const secondaryKinds = [...kinds].filter(k => k !== primaryKind).sort();
+  let secondaryNote = null;
+  if (secondaryKinds.length) {
+    const labels = secondaryKinds.map(k => KIND_LABELS[k]).join("، ");
+    secondaryNote = `لاحظت أيضًا إشارات إلى: ${labels}. تجاهلها الآن مقصود لإبقاء التوصية واحدة وواضحة؛ يمكن التعامل معها في جلسة منفصلة لاحقًا إذا استمرت.`;
+  }
+
+  if (totalFatigue >= 10) actionSteps = ["قلّص الجلسة إلى 15–20 دقيقة بسبب مستوى الطاقة الحالي.", ...actionSteps];
+
+  const recommendation = `${energyRecommendation} الخطوة الأنسب الآن: ${actionSteps[0]}`;
+  const microExperiment = kinds.has("uncertainty") ? makeMicroExperiment(task, kinds.has("execution")) : null;
+
+  return { totalFatigue, fatigueLabel, color, primaryBarrier, summary, recommendation, actionSteps, secondaryNote, microExperiment };
+}
+
+document.getElementById('runBtn').addEventListener('click', () => {
+  const task = document.getElementById('task').value.trim();
+  const warnInline = document.getElementById('warnInline');
+  if (!task) { warnInline.style.display = 'block'; return; }
+  warnInline.style.display = 'none';
+
+  const selectedKeys = [...document.querySelectorAll('#signals input[type=checkbox]:checked')].map(cb => cb.dataset.key);
+  const r = analyzeClearThinking(task, parseInt(physical.value), parseInt(mental.value), selectedKeys);
+
+  const resultsEl = document.getElementById('results');
+  let html = `
+    <div class="metrics-row">
+      <div class="metric"><div class="m-label">الإرهاق الكلي</div><div class="m-value">${r.totalFatigue}/20</div></div>
+      <div class="metric"><div class="m-label">حالة الطاقة</div><div class="m-value">${r.fatigueLabel}</div></div>
+      <div class="metric"><div class="m-label">العائق الأبرز</div><div class="m-value">${r.primaryBarrier}</div></div>
+    </div>
+    <div class="status-card ${r.color}">
+      <p><strong>الخلاصة —</strong> ${r.summary}</p>
+      <p><strong>التوصية —</strong> ${r.recommendation}</p>
+    </div>
+    <h3 class="section-h">🎯 خطوات العمل</h3>
+    <ul class="actions">${r.actionSteps.map(s => `<li>${s}</li>`).join('')}</ul>
+  `;
+  if (r.secondaryNote) html += `<div class="note">ℹ️ ${r.secondaryNote}</div>`;
+  if (r.microExperiment) {
+    html += `
+      <div class="experiment">
+        <h4>${r.microExperiment.title}</h4>
+        <p class="desc">${r.microExperiment.description}</p>
+        ${r.microExperiment.timeline.map(p => `
+          <div class="phase"><div class="phase-head"><span>${p.phase}</span><span class="phase-dur">${p.duration}</span></div><p>${p.focus}</p></div>
+        `).join('')}
+      </div>`;
+  }
+  resultsEl.innerHTML = html;
+  resultsEl.style.display = 'block';
+  resultsEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  renderFeedbackForm(task, r.primaryBarrier);
+});
+
+function renderFeedbackForm(task, primaryBarrier) {
+  const fb = document.getElementById('feedback');
+  const answers = { q1: null, q2: null, q3: null };
+  fb.innerHTML = `
+    <div class="fb-card">
+      <h3 class="section-h">٤. شاركنا رأيك في النتيجة (٣ أسئلة سريعة)</h3>
+      <div class="fb-q" data-q="q1">
+        <p>هل فهمت العائق اللي حدده التطبيق؟</p>
+        <div class="fb-opts">
+          <button type="button" class="fb-opt" data-val="نعم">نعم</button>
+          <button type="button" class="fb-opt" data-val="جزئيًا">جزئيًا</button>
+          <button type="button" class="fb-opt" data-val="لا">لا</button>
+        </div>
+      </div>
+      <div class="fb-q" data-q="q2">
+        <p>هل الخطوة التالية كانت صغيرة كفاية تنفّذها فورًا؟</p>
+        <div class="fb-opts">
+          <button type="button" class="fb-opt" data-val="نعم">نعم</button>
+          <button type="button" class="fb-opt" data-val="محتاجة تبسيط أكتر">محتاجة تبسيط أكتر</button>
+          <button type="button" class="fb-opt" data-val="لا">لا</button>
+        </div>
+      </div>
+      <div class="fb-q" data-q="q3">
+        <p>لو ظهرت التجربة المصغرة، هل هتغيّر قرارك أو تزودك بدليل؟</p>
+        <div class="fb-opts">
+          <button type="button" class="fb-opt" data-val="نعم">نعم</button>
+          <button type="button" class="fb-opt" data-val="ممكن">ممكن</button>
+          <button type="button" class="fb-opt" data-val="لا">لا</button>
+          <button type="button" class="fb-opt" data-val="ملقتش تجربة">ملقتش تجربة</button>
+        </div>
+      </div>
+      <div class="fb-q">
+        <p>أي ملاحظة إضافية؟ (اختياري)</p>
+        <textarea class="fb-note" id="fbNote" placeholder="اكتب أي حاجة حسيت بيها..."></textarea>
+      </div>
+      <button class="fb-submit" id="fbSubmit">إرسال الرأي</button>
+      <div id="fbResult"></div>
+    </div>
+  `;
+
+  fb.querySelectorAll('.fb-q').forEach(qEl => {
+    const key = qEl.dataset.q;
+    if (!key) return;
+    qEl.querySelectorAll('.fb-opt').forEach(btn => {
+      btn.addEventListener('click', () => {
+        qEl.querySelectorAll('.fb-opt').forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
+        answers[key] = btn.dataset.val;
+      });
+    });
+  });
+
+  document.getElementById('fbSubmit').addEventListener('click', () => {
+    const resultEl = document.getElementById('fbResult');
+    const note = document.getElementById('fbNote').value.trim();
+    const summary =
+      `تعليق على بوصلة التفكير الواضح\n` +
+      `المهمة: ${task.slice(0, 200)}\n` +
+      `العائق المكتشف: ${primaryBarrier}\n` +
+      `١) فهم العائق: ${answers.q1 || '—'}\n` +
+      `٢) الخطوة التالية كانت صغيرة كفاية: ${answers.q2 || '—'}\n` +
+      `٣) التجربة المصغرة مفيدة: ${answers.q3 || '—'}\n` +
+      (note ? `ملاحظة: ${note}\n` : '');
+
+    const subject = encodeURIComponent('تعليق على بوصلة التفكير الواضح');
+    const body = encodeURIComponent(summary);
+    const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(FEEDBACK_EMAIL)}&su=${subject}&body=${body}`;
+
+    navigator.clipboard.writeText(summary).catch(() => {});
+    const win = window.open(gmailUrl, '_blank');
+
+    if (win) {
+      resultEl.innerHTML = `
+        <p class="fb-done">تم فتح Gmail برسالة جاهزة — راجعها واضغط "إرسال" فوق. ✓</p>
+        <div class="fb-fallback">${summary}</div>
+      `;
+    } else {
+      // المتصفح منع فتح نافذة جديدة (popup blocker) — نديله رابط يدوي بدل ما يقف هنا
+      resultEl.innerHTML = `
+        <p style="font-size:13.5px; color:var(--ink-soft); margin:10px 0 4px;">المتصفح منع فتح نافذة جديدة. اضغط الرابط ده يدويًا، أو انسخ ردك وابعته بنفسك على ${FEEDBACK_EMAIL}:</p>
+        <p><a href="${gmailUrl}" target="_blank" rel="noopener">افتح Gmail وابعت الرد</a></p>
+        <div class="fb-fallback">${summary}</div>
+        <button class="fb-copy" id="fbCopy">نسخ الرد</button>
+      `;
+      document.getElementById('fbCopy').addEventListener('click', () => {
+        navigator.clipboard.writeText(summary).then(() => {
+          document.getElementById('fbCopy').textContent = 'تم النسخ ✓';
+        });
+      });
+    }
+  });
+}
+
+</script>
+</body>
+</html>
